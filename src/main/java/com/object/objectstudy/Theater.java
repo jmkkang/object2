@@ -6,24 +6,20 @@ import java.util.Map;
 import java.util.Set;
 
 public class Theater {
-    public static final Set<Screening> EMPTY = new HashSet<>();
+
     private final Set<TicketOffice> ticketOffices = new HashSet<>();
-    private final Map<Movie, Set<Screening>> movies = new HashMap<>();
+    private final Set<Movie> movies = new HashSet<>();
     private Money amount;
+    private Map<String, ScreeningPlace> screeningPlaces = new HashMap<>();
 
     public Theater(Money amount) {
         this.amount = amount;
     }
 
     public boolean addMovie(Movie movie) {
-        if (movies.containsKey(movie)) return false;
-        movies.put(movie, new HashSet<>());
+        if (movies.contains(movie)) return false;
+        movies.add(movie);
         return true;
-    }
-
-    public boolean addScreening(Movie movie, Screening screening) {
-        if (!movies.containsKey(movie)) return false;
-        return movies.get(movie).add(screening);
     }
 
     public boolean contractTicketOffice(TicketOffice ticketOffice, Double rate) {
@@ -36,14 +32,16 @@ public class Theater {
         return ticketOffices.remove(ticketOffice);
     }
 
-    public boolean enter(Customer customer, int count) {
+    public boolean enter(Customer customer, ScreeningPlace screeningPlace, AudienceCount count) {
         Reservation reservation = customer.reservation;
-        return reservation != Reservation.NONE && reservation.theater == this && isValidScreening(reservation.movie, reservation.screening) && reservation.count == count;
+        return reservation != Reservation.NONE && reservation.theater == this && screeningPlace.isValidScreening(reservation.movie, reservation.screening) && reservation.count == count;
     }
 
-    Reservation reserve(Movie movie, Screening screening, int count) {
-        if (!isValidScreening(movie, screening) || !screening.hasSeat(count)) return Reservation.NONE;
-        screening.reserveSeat(count);
+    Reservation reserve(Movie movie, ScreeningPlace screeningPlace, Screening screening, AudienceCount count) {
+        if (!screeningPlace.isValidScreening(movie, screening)
+                || !screeningPlace.hasSeat(screening, count))
+            return Reservation.NONE;
+        screeningPlace.reserveSeat(screening, count);
         return new Reservation(this, movie, screening, count);
     }
 
@@ -51,13 +49,18 @@ public class Theater {
         this.amount = this.amount.plus(amount);
     }
 
-    public Set<Screening> getScreening(Movie movie) {
-        if (!movies.containsKey(movie) || movies.get(movie).size() == 0) return EMPTY;
-        return movies.get(movie);
+    public boolean setScreeningPlace(String name, ScreeningPlace screeningPlace) {
+        if (this.screeningPlaces.containsKey(name)) return false;
+        this.screeningPlaces.put(name, screeningPlace);
+        return true;
     }
 
-    boolean isValidScreening(Movie movie, Screening screening) {
-        return movies.containsKey(movie) && movies.get(movie).contains(screening);
+    public ScreeningPlace getScreeningPlace(String name) {
+        return this.screeningPlaces.get(name);
+    }
+
+    public boolean hasScreeningPlace(ScreeningPlace screeningPlace) {
+        return this.screeningPlaces.containsValue(screeningPlace);
     }
 
 }

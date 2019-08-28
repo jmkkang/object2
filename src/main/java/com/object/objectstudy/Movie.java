@@ -18,12 +18,18 @@ public class Movie<T extends DiscountPolicy & DiscountCondition> {
         this.discountConditions.addAll(Arrays.asList(conditions));
     }
 
-    Money calculateFee(Screening screening, int audienceCount) {
+    Money calculateFee(Screening screening, AudienceCount audienceCount) {
+        Money resultFee = this.fee;
+
         for (T condition : discountConditions) {
             if (condition.isSatisfiedBy(screening, audienceCount)) {
-                return condition.calculateFee(fee).multi((double) audienceCount);
+
+                resultFee = condition.calculateFee(resultFee);
+
+                System.out.println("할인 내역 = "+condition+" / "+resultFee.getAmount());
             }
         }
-        return fee.multi((double) audienceCount);
+
+        return resultFee.multi(audienceCount);
     }
 }

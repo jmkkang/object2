@@ -3,22 +3,23 @@ package com.object.objectstudy;
 import java.time.LocalDateTime;
 
 public class Screening {
-    private int seat;
-    final int sequence;
-    final LocalDateTime whenScreened;
+    private final int sequence;
+    private final LocalDateTime whenScreened;
 
-    public Screening(int sequence, LocalDateTime when, int seat) {
+    public Screening(int sequence, LocalDateTime when) {
         this.sequence = sequence;
         this.whenScreened = when;
-        this.seat = seat;
     }
 
-    boolean hasSeat(int count) {
-        return seat >= count;
+    public int getSequence() {
+        return this.sequence;
     }
 
-    void reserveSeat(int count) {
-        if (hasSeat(count)) seat -= count;
-        else throw new RuntimeException("no seat");
+    public boolean isAfterScreeningDate(LocalDateTime date) {
+        return this.whenScreened.isAfter(date);
+    }
+
+    public boolean isBeforeScreeningDate(LocalDateTime date) {
+        return this.whenScreened.isBefore(date);
     }
 }

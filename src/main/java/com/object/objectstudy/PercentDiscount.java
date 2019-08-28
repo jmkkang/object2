@@ -1,14 +1,14 @@
 package com.object.objectstudy;
 
 abstract public class PercentDiscount implements DiscountPolicy.PERCENT, DiscountCondition {
-    private final double pecent;
+    private final double percent;
 
-    PercentDiscount(double pecent) {
-        this.pecent = pecent;
+    PercentDiscount(double percent) {
+        this.percent = percent;
     }
 
     @Override
     public final Money calculateFee(Money fee) {
-        return fee.minus(fee.multi(pecent));
+        return fee.minus(fee.multi(Percent.of(percent)));
     }
 }

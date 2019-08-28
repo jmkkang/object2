@@ -15,8 +15,8 @@ public class Money {
         return new Money(this.amount > amount.amount ? this.amount - amount.amount : 0.0);
     }
 
-    public Money multi(Double times) {
-        return new Money(this.amount * times);
+    public Money multi(Number number) {
+        return new Money(this.amount * number.getNumber());
     }
 
     public Money plus(Money amount) {
@@ -26,4 +26,9 @@ public class Money {
     public boolean greaterThen(Money amount) {
         return this.amount >= amount.amount;
     }
+
+    public Double getAmount() {
+        return this.amount;
+    }
+
 }

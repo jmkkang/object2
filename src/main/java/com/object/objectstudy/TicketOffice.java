@@ -23,13 +23,17 @@ public class TicketOffice {
         return true;
     }
 
-    Reservation reserve(Theater theater, Movie movie, Screening screening, int count) {
-        if (!commissionRate.containsKey(theater) || !theater.isValidScreening(movie, screening) || !screening.hasSeat(count))
+    Reservation reserve(Theater theater, ScreeningPlace screeningPlace, Movie movie, Screening screening, AudienceCount count) {
+        if (!commissionRate.containsKey(theater) ||
+                !theater.hasScreeningPlace(screeningPlace) ||
+                !screeningPlace.isValidScreening(movie, screening) ||
+                !screeningPlace.hasSeat(screening, count))
             return Reservation.NONE;
-        Reservation reservation = theater.reserve(movie, screening, count);
+
+        Reservation reservation = theater.reserve(movie, screeningPlace, screening, count);
         if (reservation != Reservation.NONE) {
             Money sales = movie.calculateFee(screening, count);
-            Money commission = sales.multi(commissionRate.get(theater));
+            Money commission = sales.multi(CommissionRate.of(commissionRate.get(theater)));
             amount = amount.plus(commission);
             theater.plusAmount(sales.minus(commission));
         }

@@ -9,7 +9,7 @@ public class SequencePercentDiscount extends PercentDiscount {
     }
 
     @Override
-    public boolean isSatisfiedBy(Screening screening, int audienceCount) {
-        return screening.sequence == sequence;
+    public boolean isSatisfiedBy(Screening screening, AudienceCount audienceCount) {
+        return screening.getSequence() == sequence;
     }
 }
